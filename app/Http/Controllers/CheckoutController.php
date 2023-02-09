@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Auth;
 class CheckoutController extends Controller
 {
 
-    public function store($name, $cashback, $phone, $address, $notes, $shipping, $total, $vc)
+    public function store($name, $cashbackUser, $cashback, $phone, $address, $notes, $shipping, $total, $vc)
     {
         // dd($vc);
         $voucher = Koinpack_voucher::where('title', $vc)->first();
@@ -76,12 +76,14 @@ class CheckoutController extends Controller
                         "status"          => 'PENDING',
                         // 'payment_link' => $response->invoice_url,
                         'products_id' => collect($products_id),
-                        'emptyBottles_id' => collect($emptyBottles_id),
+                        // 'emptyBottles_id' => collect($emptyBottles_id),
                         'receiver' => $name,
                         'phone' => $phone,
                         'address' => $address,
                         'notes' => $notes,
                         'shipping' => $shipping,
+                        'cashback_payment' => $cashback,
+                        'voucher' => $vc
                         // 'vc' => $vc,
                     ]);
                     
@@ -94,17 +96,22 @@ class CheckoutController extends Controller
                         "status"          => 'PENDING',
                         // 'payment_link' => $response->invoice_url,
                         'products_id' => collect($products_id),
-                        'emptyBottles_id' => collect($emptyBottles_id),
+                        // 'emptyBottles_id' => collect($emptyBottles_id),
                         'receiver' => $name,
                         'phone' => $phone,
                         'address' => $address,
                         'notes' => $notes,
                         'shipping' => $shipping,
+                        'cashback_payment' => $cashback,
+                        'voucher' => $vc
                         // 'vc' => $vc,
                     ]);
 
                 }
-                                
+                User::where('id', Auth::user()->id)
+                    ->update([
+                        'cashback' => $cashbackUser + $cashback
+                    ]);
                 // Alert::success('Transaction Created Successfully');        
                 return redirect()->route('success',$item->id)->with('message', 'Checkout Success!');
                 
@@ -163,15 +170,17 @@ class CheckoutController extends Controller
                         "payment_chanel" => 'Virtual Account',
                         "users_id"          => Auth::user()->id,
                         "price"          => $price - $voucher->price ?? 0,
-                        "status"          => $response->status,
+                        "status"          => $response? $response->status : "PENDING",
                         'payment_link' => $response->invoice_url,
                         'products_id' => collect($products_id),
-                        'emptyBottles_id' => collect($emptyBottles_id),
+                        // 'emptyBottles_id' => collect($emptyBottles_id),
                         'receiver' => $name,
                         'phone' => $phone,
                         'address' => $address,
                         'notes' => $notes,
                         'shipping' => $shipping,
+                        'cashback_payment' => 0,
+                        'voucher' => $vc
                         // 'vc' => $vc,
         
                     ]);
@@ -181,25 +190,32 @@ class CheckoutController extends Controller
                         "payment_chanel" => 'Virtual Account',
                         "users_id"          => Auth::user()->id,
                         "price"          => $price,
-                        "status"          => $response->status,
+                        "status"          => $response? $response->status : "PENDING",
                         'payment_link' => $response->invoice_url,
                         'products_id' => collect($products_id),
-                        'emptyBottles_id' => collect($emptyBottles_id),
+                        // 'emptyBottles_id' => collect($emptyBottles_id),
                         'receiver' => $name,
                         'phone' => $phone,
                         'address' => $address,
                         'notes' => $notes,
                         'shipping' => $shipping,
+                        'cashback_payment' => 0,
+                        'voucher' => $vc
                         // 'vc' => $vc,
         
                     ]);
 
                 }
 
+
+                User::where('id', Auth::user()->id)
+                    ->update([
+                        'cashback' => $cashbackUser
+                    ]);
                 return redirect()->to($response->invoice_url);
             }
 
-            
+           
 
         } catch (QueryException $e) {
 

@@ -146,57 +146,61 @@
               </div>
               <div class="body-orders">
                 <div class="list-orders">
-                  @foreach (json_decode($order->products_id) as $order_products)
-                  @php
-                      $productArr = explode('-',$order_products);
-                      // dd($productArr[1]);
-                      $product_order = App\Koinpack_product::find($productArr[0]);
-                  @endphp
-                  @if ($product_order)
-                  <div class="item-orders">
-                    <div class="image-orders">
-                      {{-- <img src="{{ url('frontend/assets/imgs/page/account/img-1.png') }}" alt="Alner"> --}}
-                    <img src="{!!$product_order->image ? Storage::url($product_order->image) : url('backend/assets/img/news/img11.jpg') !!} ">
+                  @if($order->products_id)
+                    @foreach (json_decode($order->products_id) as $order_products)
+                    @php
+                        $productArr = explode('-',$order_products);
+                        // dd($productArr[1]);
+                        $product_order = App\Koinpack_product::find($productArr[0]);
+                    @endphp
+                    @if ($product_order)
+                    <div class="item-orders">
+                      <div class="image-orders">
+                        {{-- <img src="{{ url('frontend/assets/imgs/page/account/img-1.png') }}" alt="Alner"> --}}
+                      <img src="{!!$product_order->image ? Storage::url($product_order->image) : url('backend/assets/img/news/img11.jpg') !!} ">
+                      </div>
+                      <div class="info-orders">
+                        <h5>{{ $product_order->name }}</h5>
+                      </div>
+                      <div class="quantity-orders">
+                        <h5>Quantity: {{ $productArr[1]}}</h5>
+                      </div>
+                      <div class="price-orders">
+                        <h5>{{ rupiah($productArr[1] * intval($product_order->price)) }}</h5>
+                      </div>
                     </div>
-                    <div class="info-orders">
-                      <h5>{{ $product_order->name }}</h5>
-                    </div>
-                    <div class="quantity-orders">
-                      <h5>Quantity: {{ $productArr[1]}}</h5>
-                    </div>
-                    <div class="price-orders">
-                      <h5>{{ rupiah($productArr[1] * intval($product_order->price)) }}</h5>
-                    </div>
-                  </div>
+                    @endif
+                    @endforeach
                   @endif
-                  @endforeach
                 </div>
                 
-                <div class="list-orders mt-3">
-                  @foreach (json_decode($order->emptyBottles_id) as $order_emptyBottle)
-                  @php
-                      $bottletArr = explode('-',$order_emptyBottle);
-                      $bottle_order = App\Koinpack_emptybottle::find($bottletArr[0]);
-                  @endphp
-                  @if ($bottle_order)
-                  <div class="item-orders">
-                    <div class="image-orders">
-                    <img src="{!!$bottle_order->image ? Storage::url($bottle_order->image) : url('backend/assets/img/news/img11.jpg') !!} ">
+                @if($order->emptyBottles_id)
+                  <div class="list-orders mt-3">
+                    @foreach (json_decode($order->emptyBottles_id) as $order_emptyBottle)
+                    @php
+                        $bottletArr = explode('-',$order_emptyBottle);
+                        $bottle_order = App\Koinpack_emptybottle::find($bottletArr[0]);
+                    @endphp
+                    @if ($bottle_order)
+                    <div class="item-orders">
+                      <div class="image-orders">
+                      <img src="{!!$bottle_order->image ? Storage::url($bottle_order->image) : url('backend/assets/img/news/img11.jpg') !!} ">
+                      </div>
+                      <div class="info-orders">
+                        <h5>{{ $bottle_order->name }}</h5>
+                      </div>
+                      <div class="quantity-orders">
+                        <h5>Quantity: {{ $bottletArr[1]}}</h5>
+                      </div>
+                      <div class="price-orders">
+                        <h5>{{ rupiah( $bottletArr[1] * intval($bottle_order->price)) }}</h5>
+                      </div>
+              
                     </div>
-                    <div class="info-orders">
-                      <h5>{{ $bottle_order->name }}</h5>
-                    </div>
-                    <div class="quantity-orders">
-                      <h5>Quantity: {{ $bottletArr[1]}}</h5>
-                    </div>
-                    <div class="price-orders">
-                      <h5>{{ rupiah( $bottletArr[1] * intval($bottle_order->price)) }}</h5>
-                    </div>
-             
+                    @endif
+                    @endforeach
                   </div>
-                  @endif
-                  @endforeach
-                </div>
+                @endif
               </div>
             </div>    
             @endforeach

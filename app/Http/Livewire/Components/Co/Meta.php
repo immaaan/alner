@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use App\Koinpack_customer;
 use App\Koinpack_shopping_cart;
+use App\Koinpack_voucher;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,11 +23,14 @@ class Meta extends Component
     public $vc;
     public $notes;
     public $total;
+    public $nominalVoucher;
     public $totalProduct;
     public $totaleEmptyBottle;
     public $cashback = 0;
-    public $shipping = 10;
+    public $shipping = 0;
     public $cashbackUser = 0;
+    public $firstCashBack = 0;
+    public $isChecked = false;
 
     protected $listeners = [
         'updatedQty' => 'setTotal',
@@ -74,10 +78,49 @@ class Meta extends Component
 
     }
 
+    public function getNominalVoucher() {
+        $title = $this->vc;
+        $voucher = Koinpack_voucher::where('title', $title)->first();
+        
+        if ($voucher == null){
+            $this->nominalVoucher = 0;
+            return response()->json([
+                'req' => $this->vc,
+                'msg' => 'Voucher Tidak Ditemukan!'
+            ]);
+        }else{
+            $this->nominalVoucher = $voucher->price;
+            return response()->json([
+                'req' => $this->vc,
+                'msg' => 'Voucher Ditemukan',
+                'price' => $voucher->price
+            ]);
+        }   
+    }
+
+    public function setValue($total, $cashbackUser) {
+        $this->isChecked = !$this->isChecked;
+        if ($this->isChecked) {
+            if ($total > $cashbackUser) {
+                $this->total = $this->cashbackUser;
+                $this->cashbackUser = 0;
+            }
+            else {
+                $this->cashbackUser = $this->firstCashBack - $total;
+                $this->total = $total;
+            }
+        }
+        else {
+            $this->total = 0;
+            $this->cashbackUser = $this->firstCashBack;
+        }
+    }
+
     public function mount($user, $customer)
     {
         $this->setTotal();
         $this->cashbackUser = $user->cashback;
+        $this->firstCashBack = $user->cashback;
         $this->name = $user->name;
         $this->phone = $user->phone;
         $this->address = $customer->address;
@@ -88,12 +131,12 @@ class Meta extends Component
         return view('livewire.components.co.meta');
     }
 
-    public function store($total)
+    public function store($total, $cashback, $cashbackUser)
     {
-       dd($total);
         return App::call('App\Http\Controllers\CheckoutController@store' , [
             'name' => $this->name,
             'cashback' => $cashback,
+            'cashbackUser' => $cashbackUser,
             'phone' => $this->phone,
             'address' => $this->address,
             'notes' => $this->notes,

@@ -39,6 +39,7 @@
                         {{-- <th class="">Price</th> --}}
                          <th class="">Status</th>
                          <th class="">Total Price</th>
+                         <th class="">Cashback</th> 
                          <th class="text-center">Action</th>
                       </tr>
                   </thead>
@@ -67,6 +68,7 @@
                               <td class=""><span class="">{{ $item->customer_full->name }}</span></td>
                               <td class=""><span class="">{{ $item->status }}</span></td>
                               <td class=""><span class="badge badge-info">{{ $item->price }}</span></td>
+                              <td class=""><span class="">{{ $item->cashback_payment }}</span></td>
                               
                               {{-- <td class="">
                                 @if ($item->product)

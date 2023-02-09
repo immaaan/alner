@@ -58,10 +58,10 @@
                     <label for="external_id">Unique Id</label>
                     <input type="text" class="form-control" name="external_id" placeholder="Unique Id" value="{{ old('external_id') }}">
                   </div> --}}
-                  <div class="form-group">
+                  {{-- <div class="form-group">
                     <label for="price">Total Price</label>
                     <input type="number" class="form-control" name="price" placeholder="Total Price" value="{{ old('price') }}" required>
-                  </div>
+                  </div> --}}
                   {{-- <div class="form-group">
                     <label for="">Status</label>
                     <div class="input-group">
@@ -78,7 +78,36 @@
                       </select>
                     </div>
                   </div> --}}
+                  <div class="form-group">
+                    <label for="status">Status</label>
+                    <input type="text" class="form-control" name="status" placeholder="Status" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="totalprice">Total Price</label>
+                    <input type="number" class="form-control" name="price" placeholder="Total Price" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="cashback">Cashback</label>
+                    <input type="number" class="form-control" name="cashback" placeholder="CashBack" required>
+                  </div>
+
+                
+                  <div class="form-group">
+                    <label for="voucher">Voucher</label>
+                    <input type="text" class="form-control" name="voucher" placeholder="Voucher" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="voucher">Notes</label>
+                    <input type="text" class="form-control" name="voucher" placeholder="Notes" required>
+                  </div>
                   
+                  <div class="form-group">
+                    <label for="shipping">Shipping</label>
+                    <input type="text" class="form-control" name="shipping" placeholder="shipping" required>
+                  </div>
                   <button type="submit" class="btn btn-primary btn-block">
                     <i class="fa-solid fa-pencil text-white-50"></i> Create
                   </button>

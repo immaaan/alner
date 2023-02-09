@@ -51,11 +51,11 @@
                     </select>
                   </div>
 
-                  <div class="form-group">
-                    <label for="products_id">Product</label>
+                  {{-- <div class="form-group">
+                    <label for="products_id">Product</label> --}}
                     {{-- {{var_dump($item->products_id)}} --}}
 
-                    <select name="products_id" class="form-control" required>
+                    {{-- <select name="products_id" class="form-control" required>
                       @if ($item->products_id)
                         <option value="{{$item->products_id}}">.: {{$item->product->name ?? ''}} :.</option>
                       @else
@@ -68,14 +68,42 @@
                           <option value="">.: Null :.</option>
                       @endforelse
                     </select>
-                  </div>
+                  </div> --}}
 
 
-                  <div class="form-group">
+                  {{-- <div class="form-group">
                     <label for="qty">Qty</label>
                     <input type="number" class="form-control" name="qty" placeholder="Qty" value="{{ $item->qty }}" required>
+                  </div> --}}
+                  <div class="form-group">
+                    <label for="status">Status</label>
+                    <input type="text" class="form-control" name="status" placeholder="Status" value="{{ $item->status }}" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="totalprice">Total Price</label>
+                    <input type="number" class="form-control" name="price" placeholder="Total Price" value="{{ $item->price }}" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="cashback">Cashback</label>
+                    <input type="number" class="form-control" name="cashback_payment" placeholder="CashBack" value="{{ $item->customer_full->cashback }}" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="voucher">Voucher</label>
+                    <input type="text" class="form-control" name="voucher" placeholder="Voucher" value="{{$item->voucher}}" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="voucher">Notes</label>
+                    <input type="text" class="form-control" name="notes" placeholder="Notes" value="{{ $item->notes }}" required>
                   </div>
                   
+                  <div class="form-group">
+                    <label for="shipping">Shipping</label>
+                    <input type="text" class="form-control" name="shipping" placeholder="shipping" value="{{ $item->shipping }}" required>
+                  </div>
                   <button type="submit" class="btn btn-primary btn-block">
                     <i class="fa-solid fa-pen-to-square text-white-50"></i> Update
                   </button>

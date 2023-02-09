@@ -35,7 +35,7 @@ class Koinpack_transactionController extends Controller
         // ->get();
         $items = Koinpack_payment::with([
             'customer','customer_full'
-        ])->get();
+        ])->orderBy('created_at', 'DESC')->get();
 
         // $user= Auth::user()->roles;
         // dd($items);
@@ -48,7 +48,7 @@ class Koinpack_transactionController extends Controller
         }
 
         return view('pages.admin.transaction-koinpack.index', [
-            'items' => $items
+            'items' => $items,
         ]);
     }
 
@@ -95,15 +95,28 @@ class Koinpack_transactionController extends Controller
             ]);
             
             $response = $data_request->object();
-            // dd($response);
+
             $item = Koinpack_payment::create([
                 "external_id"    => $external_id,
                 "payment_chanel" => 'Virtual Account',
                 "users_id"          => $request->users_id,
                 "price"          => $request->price,
-                "status"          => $response->status,
-                'payment_link' => $response->invoice_url,
+                "status"          => $response? $response->status : "PENDING",
+                'payment_link' => $response? $response->invoice_url : "",
+                'cashback_payment' => $request->cashback,
+                'notes' => $request->notes,
+                'voucher' => $request->voucher,
             ]);
+
+            $user = Users::where('id', $request->users_id)->first();
+
+            Users::where('id', $request->users_id)
+                ->update([
+                    'cashback' => $user->cashback + $request->cashback
+                ]);
+            
+                
+
             try {
             // dd($item);
         } catch (QueryException $e) {
@@ -181,14 +194,14 @@ class Koinpack_transactionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(ShopingRequest $request, $id)
+
+    public function update(Request $request, $id)
     {
         
         // $request->validate([
         //     'name_category'         =>  'required|max:100|unique:koinpack_categories,name_category,'. $id,
 
         // ]);
-
         $data = $request->all();
         //$data['slug'] = Str::slug($request->title); //menambahkan slug, sebagai ID tapi lebih cantiknya
         // $request->file('foto') != null ? $data['foto'] = $request->file('foto')->store('assets/gallery', 'public') : $data['foto'] = null;
@@ -196,6 +209,7 @@ class Koinpack_transactionController extends Controller
         // $request->file('image') != null ? $data['image'] = $request->file('image')->store('assets/gallery', 'public') : null;
 
         $item = Koinpack_payment::findOrFail($id);
+      
         try {
             
             $item->update($data);
